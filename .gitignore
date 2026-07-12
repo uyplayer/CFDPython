@@ -1,5 +1,6 @@
 *.swp
 lessons/.ipynb_checkpoints
 .env
+__pycache__
 .DS_Store
 .venv
