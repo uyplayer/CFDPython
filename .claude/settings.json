@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"import json; nb=json.load\\(open\\('/home/uyplayer/projects/CFDPython/src/step_6/step_6.ipynb'\\)\\); print\\('cells:', len\\(nb['cells']\\)\\); [print\\(i, c['cell_type']\\) for i,c in enumerate\\(nb['cells']\\)]\")",
+      "Bash(python3 -c ' *)",
+      "Bash(python3 translate.py)",
+      "Bash(python3 src/step_11/translate.py)",
+      "Bash(python3 /tmp/translate_step7.py)",
+      "Bash(python3 /tmp/translate_step2.py)",
+      "Bash(python3 /tmp/translate_step5.py)",
+      "Bash(python3 /tmp/translate_step9.py)"
+    ],
+    "additionalDirectories": [
+      "/tmp"
+    ]
+  }
+}
