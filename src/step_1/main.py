@@ -23,7 +23,7 @@ class OneDLinearConvection:
         self.x = numpy.linspace(0, self.L, self.nx)
         
         u = numpy.ones(self.nx)
-        # 人工初始化
+        # 初始条件赋值
         u[int(.5 / delta_x):int(1 / delta_x + 1)] = 2 
         
     
