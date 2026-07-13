@@ -1,9 +1,18 @@
-import numpy                   
-from matplotlib import pyplot      
-import time, sys 
+'''
+Author: uyplayer uyplayer@outlook.com
+Date: 2026-07-13 19:42:10
+LastEditors: uyplayer uyplayer@outlook.com
+LastEditTime: 2026-07-13 19:53:57
+FilePath: /CFDPython/src/step_1/main.py
+Description: 生成遇到问题，请再试试
+'''
+import os
+import numpy
+from matplotlib import pyplot
+import time, sys
 import scipy as sp
-import matplotlib.animation as animation 
-from sympy import N 
+import matplotlib.animation as animation
+from sympy import N
 
 
 class OneDLinearConvection:
@@ -39,26 +48,34 @@ class OneDLinearConvection:
         self.u_final = u    
         
     def plot(self):
-       
         if self.u_final is None or self.u_initial is None or self.x is None:
             print("请先调用 simulate() 方法进行仿真，再进行绘图！")
             return
-            
- 
-        pyplot.figure(figsize=(8, 5))
+
+     
+        fig = pyplot.figure(figsize=(8, 5))
         pyplot.plot(self.x, self.u_initial, label='Initial (t=0)', linestyle='--')
         pyplot.plot(self.x, self.u_final, label=f'Final (nt={self.nt})', linewidth=2)
         pyplot.xlabel('X')
         pyplot.ylabel('Velocity u')
         pyplot.title('1D Linear Convection Simulation')
         pyplot.legend()
-        pyplot.show()
+
+        filename = f'convection_nx{self.nx}_nt{self.nt}_c{self.c}.png'
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        filepath = os.path.join(script_dir, filename)
+        fig.savefig(filepath, dpi=120, bbox_inches='tight')
+        pyplot.close(fig)
+        print(f'图已保存到：{filepath}')
         
         
 if __name__ == '__main__':
  
     sim = OneDLinearConvection(nx=100, nt=20, c=1.0)
     
+    
+    
+    sim = OneDLinearConvection(nx=30, nt=20, c=1.0)
  
     sim.simulate()
      
