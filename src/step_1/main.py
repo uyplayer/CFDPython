@@ -1,11 +1,14 @@
 '''
-Author: uyplayer uyplayer@outlook.com
+Author: uyplayer
+Email: uyplayer@outlook.com
 Date: 2026-07-13 19:42:10
-LastEditors: uyplayer uyplayer@outlook.com
-LastEditTime: 2026-07-13 19:53:57
+LastEditTime: 2026-07-13 20:02:57
+LastEditors: uyplayer
+Description: some description
 FilePath: /CFDPython/src/step_1/main.py
-Description: 生成遇到问题，请再试试
+@copyright Copyright (c) 2026 by uyplayer
 '''
+
 import os
 import numpy
 from matplotlib import pyplot
