@@ -2,7 +2,7 @@
 Author: uyplayer
 Email: uyplayer@outlook.com
 Date: 2026-07-13 08:56:43
-LastEditTime: 2026-07-14 17:29:26
+LastEditTime: 2026-07-15 08:46:23
 LastEditors: uyplayer uyplayer@outlook.com
 Description: 收敛性与库朗条件（CFL条件）
 FilePath: /CFDPython/src/step_3/main.py
@@ -74,3 +74,26 @@ class LinearConv:
         fig.savefig(filepath, dpi=120, bbox_inches='tight')
         pyplot.close(fig)
         print(f'图已保存到：{filepath}')
+        
+        
+if __name__ == "__main__":
+    nx = 41
+    conv = LinearConv(nx)
+    conv.simulate()
+    conv.plot()
+    
+    
+    
+    nx =60
+    conv = LinearConv(nx)
+    conv.simulate()
+    conv.plot()
+    
+    
+    
+    nx =80
+    conv = LinearConv(nx)
+    conv.simulate()
+    conv.plot()
+    
+            
