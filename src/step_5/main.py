@@ -1,95 +1,101 @@
+
 '''
 Author: uyplayer uyplayer@outlook.com
 Date: 2026-07-13 08:56:43
 LastEditors: uyplayer uyplayer@outlook.com
-LastEditTime: 2026-07-17 09:35:34
+LastEditTime: 2026-07-17 15:47:55
 FilePath: /CFDPython/src/step_5/main.py
-Description: 生成遇到问题，请再试试
+Description: 2D Linear Convection
 '''
-import numpy
 import os
-import sympy
-from typing import Optional
-from sympy.utilities.lambdify import lambdify
-from matplotlib import pyplot
+import numpy
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import pyplot, colormaps
 
 
-class BurgersEquation:
+class TwoDLinearConvection:
 
-    def __init__(self, nx, nt, nu=0.07, L=2*numpy.pi, dt=None):
+    def __init__(self, nx, ny, nt, c=1, L=2.0, sigma=0.2):
         self.nx = nx
+        self.ny = ny
         self.nt = nt
-        self.nu = nu
-        self.L = L                          
-        self.dx = L / (nx - 1)              
-        
-        self.x:         Optional[numpy.ndarray] = None
-        self.u_initial: Optional[numpy.ndarray] = None
-        self.u_final:   Optional[numpy.ndarray] = None
-        
-        u_max = 5.0                         
-        if dt is None:
-            self.dt = min(self.dx / u_max, 0.5 * self.dx**2 / self.nu)
-        else:
-            self.dt = dt
+        self.c = c
+        self.L = L
 
- 
-    def build_initial_condition(self):
- 
-        x  = sympy.Symbol('x')
-        nu = sympy.Symbol('nu')
-        t  = sympy.Symbol('t')
-     
-        phi = (sympy.exp(-(x - 4*t)**2 / (4*nu*(t + 1))) +
-               sympy.exp(-(x - 4*t - 2*sympy.pi)**2 / (4*nu*(t + 1))))
-        phiprime = phi.diff(x)
- 
-        u_expr = -2*nu*(phiprime/phi) + 4
-        self.ufunc = lambdify((t, x, nu), u_expr)
- 
-    def simulate(self):
-        self.build_initial_condition()
-        # 网络空间
+        self.delta_x = self.L / (self.nx - 1)
+        self.delta_y = self.L / (self.ny - 1)
+
+      
+        self.sigma = sigma
+        self.delta_t = self.sigma * self.delta_x
+
+        # x 和 y grid  绘制2D 网格 
         self.x = numpy.linspace(0, self.L, self.nx)
-        t = 0.0
-        # 当前时刻的解
-        self.u = numpy.asarray([self.ufunc(t, x0, self.nu) for x0 in self.x])
- 
-        self.u_initial = self.u.copy()
+        self.y = numpy.linspace(0, self.L, self.ny)
+        self.X, self.Y = numpy.meshgrid(self.x, self.y)
 
-        for n in range(self.nt):
-            print(f"当前时间步数：{n}")
-            un = self.u.copy()
-            print(f't={t:.2f}')
-            for i in range(1, self.nx - 1):
-                print(f"当前网格点：{i}")
-                self.u[i] = (un[i]
-                             - un[i] * self.dt / self.dx * (un[i] - un[i-1])
-                             + self.nu * self.dt / self.dx**2
-                               * (un[i+1] - 2*un[i] + un[i-1]))
-            # 周期性边界
-            self.u[0] = (un[0]
-                         - un[0] * self.dt / self.dx * (un[0] - un[-2])
-                         + self.nu * self.dt / self.dx**2
-                           * (un[1] - 2*un[0] + un[-2]))
-            self.u[-1] = self.u[0]
+        self.u = None           
+        self.u_initial = None   
+        self.u_final = None     
 
-        # 保存最终状态(供 plot() 使用)
-        self.u_final = self.u.copy()
- 
-    def plot(self):    
-        if self.u_final is None or self.u_initial is None or self.x is None:
+    def simulate(self):
+        
+        # 初始状态
+        u = numpy.ones((self.ny, self.nx))
+        # 设置边界条件
+        u[int(.5 / self.delta_y):int(1 / self.delta_y + 1),
+          int(.5 / self.delta_x):int(1 / self.delta_x + 1)] = 2
+
+        # 初始值绘制用
+        self.u_initial = u.copy()
+
+        for _ in range(self.nt + 1):
+            un = u.copy()
+   
+            u[1:, 1:] = (
+                un[1:, 1:]
+                - (self.c * self.delta_t / self.delta_x
+                   * (un[1:, 1:] - un[1:, :-1]))
+                - (self.c * self.delta_t / self.delta_y
+                   * (un[1:, 1:] - un[:-1, 1:]))
+            )
+            # 边界条件
+            u[0, :] = 1
+            u[-1, :] = 1
+            u[:, 0] = 1
+            u[:, -1] = 1
+
+        self.u = u
+        self.u_final = u.copy()
+        return self.u
+
+    def plot(self):
+        """Plot initial and final states side-by-side; save to PNG."""
+        if self.u_initial is None or self.u_final is None:
             print("请先调用 simulate() 方法进行仿真，再进行绘图！")
             return
 
-     
-        fig = pyplot.figure(figsize=(8, 5))
-        pyplot.plot(self.x, self.u_initial, label='Initial (t=0)', linestyle='--')
-        pyplot.plot(self.x, self.u_final, label=f'Final (nt={self.nt})', linewidth=2)
-        pyplot.xlabel('X')
-        pyplot.ylabel('Velocity u')
-        pyplot.title(f"1D Burgers' Equation Simulation (nu={self.nu})")
-        pyplot.legend()
+        fig = pyplot.figure(figsize=(15, 6), dpi=100)
+ 
+        ax1 = fig.add_subplot(121, projection='3d')  
+        ax1.plot_surface(self.X, self.Y, self.u_initial[:], cmap=colormaps['viridis'])
+        ax1.set_xlabel('x')
+        ax1.set_ylabel('y')
+        ax1.set_zlabel('u')
+        ax1.set_title('Initial (t=0)')
+
+        ax2 = fig.add_subplot(122, projection='3d')  
+        ax2.plot_surface(self.X, self.Y, self.u_final[:], cmap=colormaps['viridis'])
+        ax2.set_xlabel('x')
+        ax2.set_ylabel('y')
+        ax2.set_zlabel('u')
+        ax2.set_title(f'Final (nt={self.nt})')
+
+        fig.suptitle(
+            f'2D Linear Convection (nx={self.nx}, ny={self.ny}, nt={self.nt})',
+            fontsize=14,
+        )
+        fig.tight_layout()
 
         filename = f'convection_nx{self.nx}_nt{self.nt}.png'
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -100,6 +106,23 @@ class BurgersEquation:
 
 
 if __name__ == '__main__':
-    burgers = BurgersEquation(nx=101, nt=1000)
-    burgers.simulate()
-    burgers.plot()
+    sim = TwoDLinearConvection(nx=81, ny=81, nt=100)
+    sim.simulate()
+    sim.plot()
+
+    
+    
+    sim = TwoDLinearConvection(nx=81, ny=81, nt=100,sigma=0.5)
+    sim.simulate()
+    sim.plot()
+
+
+    sim = TwoDLinearConvection(nx=160, ny=160, nt=100,sigma=0.95)
+    sim.simulate()
+    sim.plot()
+    
+    
+    
+    sim = TwoDLinearConvection(nx=160, ny=160, nt=200,sigma=0.95)
+    sim.simulate()
+    sim.plot()
