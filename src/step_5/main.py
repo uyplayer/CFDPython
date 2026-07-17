@@ -101,8 +101,12 @@ class TwoDLinearConvection:
         script_dir = os.path.dirname(os.path.abspath(__file__))
         filepath = os.path.join(script_dir, filename)
         fig.savefig(filepath, dpi=120, bbox_inches='tight')
-        pyplot.close(fig)
         print(f'图已保存到：{filepath}')
+
+        # Show interactively (instead of pyplot.close) so the 3D view can
+        # be rotated with the mouse. The script blocks here until the
+        # window is closed.
+        pyplot.show()
 
 
 if __name__ == '__main__':
