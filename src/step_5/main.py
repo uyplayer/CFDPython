@@ -3,7 +3,7 @@
 Author: uyplayer uyplayer@outlook.com
 Date: 2026-07-13 08:56:43
 LastEditors: uyplayer uyplayer@outlook.com
-LastEditTime: 2026-07-17 15:47:55
+LastEditTime: 2026-07-18 12:20:40
 FilePath: /CFDPython/src/step_5/main.py
 Description: 2D Linear Convection
 '''
@@ -102,10 +102,7 @@ class TwoDLinearConvection:
         filepath = os.path.join(script_dir, filename)
         fig.savefig(filepath, dpi=120, bbox_inches='tight')
         print(f'图已保存到：{filepath}')
-
-        # Show interactively (instead of pyplot.close) so the 3D view can
-        # be rotated with the mouse. The script blocks here until the
-        # window is closed.
+ 
         pyplot.show()
 
 
