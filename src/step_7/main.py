@@ -2,7 +2,7 @@
 Author: uyplayer
 Email: uyplayer@outlook.com
 Date: 2026-07-18 12:10:49
-LastEditTime: 2026-07-18 15:19:30
+LastEditTime: 2026-07-18 15:54:41
 LastEditors: uyplayer uyplayer@outlook.com
 Description:  2D Diffusion
 FilePath: /CFDPython/src/step_7/main.py
@@ -110,15 +110,18 @@ class TwoDDiffusion:
 
 
 if __name__ == '__main__':
-
+  
     sim = TwoDDiffusion(nx=31, ny=31, nt=10, nu=0.05)
     sim.simulate()
     sim.plot()
 
-    sim = TwoDDiffusion(nx=31, ny=31, nt=14, nu=0.05)
-    sim.simulate()
-    sim.plot()
 
-    sim = TwoDDiffusion(nx=31, ny=31, nt=50, nu=0.05)
-    sim.simulate()
-    sim.plot()
+    T_total = 1.0  # 总物理时间
+    for nx in [31, 60, 100, 500]:
+        sim = TwoDDiffusion(nx=nx, ny=nx, nt=10, nu=0.05)  # 先创建实例拿到 dx
+        sim.delta_t = sim.sigma * sim.delta_x * sim.delta_y / sim.nu
+        nt_needed = int(T_total / sim.delta_t)
+        sim.nt = nt_needed
+        sim.simulate()
+        print(f'nx={nx}, Δt={sim.delta_t:.6f}, nt={nt_needed}, T={nt_needed * sim.delta_t:.4f}')
+        sim.plot()
