@@ -2,7 +2,7 @@
 Author: uyplayer
 Email: uyplayer@outlook.com
 Date: 2026-07-18 12:10:49
-LastEditTime: 2026-07-18 13:04:42
+LastEditTime: 2026-07-18 13:06:21
 LastEditors: uyplayer uyplayer@outlook.com
 Description:  2D Convection
 FilePath: /CFDPython/src/step_6/main.py
@@ -103,7 +103,7 @@ class TwoDConvection:
         fig = pyplot.figure(figsize=(15, 10), dpi=100)
 
         # u — initial
-        ax1: Axes3D = fig.add_subplot(221, projection='3d')  # type: ignore[assignment]
+        ax1: Axes3D = fig.add_subplot(221, projection='3d')  
         ax1.plot_surface(self.X, self.Y, self.u_initial[:], cmap=colormaps['viridis'])
         ax1.set_xlabel('x')
         ax1.set_ylabel('y')
@@ -111,7 +111,7 @@ class TwoDConvection:
         ax1.set_title('u — Initial (t=0)')
 
         # u — final
-        ax2: Axes3D = fig.add_subplot(222, projection='3d')  # type: ignore[assignment]
+        ax2: Axes3D = fig.add_subplot(222, projection='3d')   
         ax2.plot_surface(self.X, self.Y, self.u_final[:], cmap=colormaps['viridis'])
         ax2.set_xlabel('x')
         ax2.set_ylabel('y')
@@ -119,7 +119,7 @@ class TwoDConvection:
         ax2.set_title(f'u — Final (nt={self.nt})')
 
         # v — initial
-        ax3: Axes3D = fig.add_subplot(223, projection='3d')  # type: ignore[assignment]
+        ax3: Axes3D = fig.add_subplot(223, projection='3d')  
         ax3.plot_surface(self.X, self.Y, self.v_initial[:], cmap=colormaps['viridis'])
         ax3.set_xlabel('x')
         ax3.set_ylabel('y')
@@ -127,7 +127,7 @@ class TwoDConvection:
         ax3.set_title('v — Initial (t=0)')
 
         # v — final
-        ax4: Axes3D = fig.add_subplot(224, projection='3d')  # type: ignore[assignment]
+        ax4: Axes3D = fig.add_subplot(224, projection='3d')  
         ax4.plot_surface(self.X, self.Y, self.v_final[:], cmap=colormaps['viridis'])
         ax4.set_xlabel('x')
         ax4.set_ylabel('y')
